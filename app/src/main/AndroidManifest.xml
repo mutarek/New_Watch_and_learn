@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bdsoftwaresolution.watchtolearn">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Activities.PlayerActivity"
+            android:theme="@style/noBar"></activity>
+        <activity
+            android:name=".Activities.VideoListActivity"
+            android:theme="@style/noBar">
+        </activity>
+        <activity
+            android:name=".Activities.NavDrawerActivity"
+            android:label="@string/title_activity_nav_drawer"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.HomeActivity"
+            android:theme="@style/noBar" />
+        <activity
+            android:name=".Activities.CompeleteProfileActivity"
+            android:theme="@style/noBar" />
+        <activity
+            android:name=".Activities.SLActivity"
+            android:theme="@style/noBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity" />
+    </application>
+
+</manifest>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "8523613044",
+    "firebase_url": "https://watch-to-learn.firebaseio.com",
+    "project_id": "watch-to-learn",
+    "storage_bucket": "watch-to-learn.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8523613044:android:c55c400cb8394c16d86221",
+        "android_client_info": {
+          "package_name": "com.bdsoftwaresolution.watchtolearn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "8523613044-9ue8rpvhov7br2rscnaheedjnehthjk1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bdsoftwaresolution.watchtolearn",
+            "certificate_hash": "673d013181bea3fe52c70609abd9711cd57fb31c"
+          }
+        },
+        {
+          "client_id": "8523613044-pi2qt4r4bofq17k6t1jpcth2gs3rl6bu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZsGgAm651IGcgv-c4fBAz_HIo5c9mNW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8523613044-pi2qt4r4bofq17k6t1jpcth2gs3rl6bu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
