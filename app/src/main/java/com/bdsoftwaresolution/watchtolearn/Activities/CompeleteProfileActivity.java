@@ -20,11 +20,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -33,6 +35,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 
 public class CompeleteProfileActivity extends AppCompatActivity {
 
@@ -45,13 +48,12 @@ public class CompeleteProfileActivity extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 10;
 
     //Firebase
-    FirebaseStorage storage;
-    StorageReference storageReference;
+    private StorageReference storageReference;
     private FirebaseAuth firebaseAuth;
     String cUser;
     private DatabaseReference databaseReference;
-    String downloadUri;
-    Task<Uri> result;
+    String downloaduri;
+    ProgressDialog progressDialog ;
 
 
     @Override
@@ -78,6 +80,32 @@ public class CompeleteProfileActivity extends AppCompatActivity {
 
     }
 
+    private void checkprofiledoneornot() {
+        databaseReference.child("Users").child(cUser).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("User_Name"))
+                {
+                    updateUi();
+                }
+                else
+                {
+                    Toasty.error(CompeleteProfileActivity.this, "This is an error toast.", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateUi() {
+        startActivity(new Intent(CompeleteProfileActivity.this,LandingActivity.class));
+        finish();
+    }
+
     private void casting() {
         userprofile = findViewById(R.id.user_profile_image);
         uname = findViewById(R.id.user_nameET);
@@ -85,11 +113,13 @@ public class CompeleteProfileActivity extends AppCompatActivity {
         ucode = findViewById(R.id.user_u_codeET);
         urefer = findViewById(R.id.user_refer_code);
         finishbtn = findViewById(R.id.finishBTN);
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
         firebaseAuth = FirebaseAuth.getInstance();
         cUser = firebaseAuth.getCurrentUser().getUid();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference().child("Profile_Picture");
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading.....");
+
 
     }
 
@@ -106,6 +136,7 @@ public class CompeleteProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Number is Mandatory", Toast.LENGTH_SHORT).show();
         } else {
             uploadInfotoDb();
+            progressDialog.show();
         }
     }
 
@@ -114,36 +145,26 @@ public class CompeleteProfileActivity extends AppCompatActivity {
     }
 
     private void uploadProfilePic() {
-        if (filePath != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-            StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        final StorageReference upload = storageReference.child("image"+filePath.getLastPathSegment());
+        upload.putFile(filePath).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful())
+                {
+                    upload.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
+                        public void onSuccess(Uri uri) {
+                            downloaduri = String.valueOf(uri);
                             uploadAllInfotoDB();
-                            Toast.makeText(CompeleteProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(CompeleteProfileActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
-        }
+                }
+                else
+                {
+                    Toast.makeText(CompeleteProfileActivity.this, ""+task.getException(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void uploadAllInfotoDB() {
@@ -152,14 +173,16 @@ public class CompeleteProfileActivity extends AppCompatActivity {
         hashMap.put("User_Number", usernumber);
         hashMap.put("User_Code", usercode);
         hashMap.put("User_Refer", userRefer);
-        hashMap.put("User_Profile_Picture", result);
+        hashMap.put("User_Balance", 0);
+        hashMap.put("User_Profile_Picture", downloaduri);
         databaseReference.child("Users").child(cUser).setValue(hashMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            progressDialog.dismiss();
                             Toast.makeText(CompeleteProfileActivity.this, "Done", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(CompeleteProfileActivity.this, NavDrawerActivity.class));
+                            startActivity(new Intent(CompeleteProfileActivity.this, LandingActivity.class));
                         } else {
                             Toast.makeText(CompeleteProfileActivity.this, "" + task.getException(), Toast.LENGTH_SHORT).show();
                         }
@@ -183,5 +206,9 @@ public class CompeleteProfileActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkprofiledoneornot();
+    }
 }
