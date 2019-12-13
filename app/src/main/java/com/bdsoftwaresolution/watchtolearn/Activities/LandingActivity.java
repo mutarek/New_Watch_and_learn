@@ -50,11 +50,11 @@ public class LandingActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String sname = dataSnapshot.child("User_Name").getValue().toString();
-                    name.setText(sname);
+                    name.setText("Name: "+sname);
                     String snumber = dataSnapshot.child("User_Number").getValue().toString();
                     String sbalance = dataSnapshot.child("User_Balance").getValue().toString();
-                    balance.setText(sbalance);
-                    mobile.setText(snumber);
+                    balance.setText("Balance: "+sbalance);
+                    mobile.setText("Number: "+snumber);
                     String sprofile = dataSnapshot.child("User_Profile_Picture").getValue().toString();
                     Glide.with(LandingActivity.this).load(sprofile).into(landingprofile);
                 }
