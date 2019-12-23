@@ -174,6 +174,7 @@ public class CompeleteProfileActivity extends AppCompatActivity {
         hashMap.put("User_Code", usercode);
         hashMap.put("User_Refer", userRefer);
         hashMap.put("User_Balance", 0);
+        hashMap.put("Activity","Pending");
         hashMap.put("User_Profile_Picture", downloaduri);
         databaseReference.child("Users").child(cUser).setValue(hashMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

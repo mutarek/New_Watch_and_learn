@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bdsoftwaresolution.watchtolearn.R;
@@ -21,6 +22,7 @@ public class LandingActivity extends AppCompatActivity {
 
     private CircleImageView landingprofile;
     private TextView name, mobile, balance;
+    private ImageView activity;
     private FirebaseAuth firebaseAuth;
     String cUser;
     private DatabaseReference databaseReference;
@@ -37,6 +39,7 @@ public class LandingActivity extends AppCompatActivity {
         name = findViewById(R.id.landing_user_name);
         mobile = findViewById(R.id.lading_user_number);
         balance = findViewById(R.id.landing_user_balance);
+        activity = findViewById(R.id.activity);
         firebaseAuth = FirebaseAuth.getInstance();
         cUser = firebaseAuth.getCurrentUser().getUid();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -53,10 +56,19 @@ public class LandingActivity extends AppCompatActivity {
                     name.setText("Name: "+sname);
                     String snumber = dataSnapshot.child("User_Number").getValue().toString();
                     String sbalance = dataSnapshot.child("User_Balance").getValue().toString();
-                    balance.setText("Balance: "+sbalance);
+                    String sActivty = dataSnapshot.child("Activity").getValue().toString();
+                    balance.setText("Balance: "+sbalance +"Tk");
                     mobile.setText("Number: "+snumber);
                     String sprofile = dataSnapshot.child("User_Profile_Picture").getValue().toString();
                     Glide.with(LandingActivity.this).load(sprofile).into(landingprofile);
+                    if (sActivty.contains("Pending"))
+                    {
+                       activity.setImageResource(R.drawable.nonverifieduser);
+                    }
+                    else
+                    {
+                        activity.setImageResource(R.drawable.verifiedicon);
+                    }
                 }
             }
 
