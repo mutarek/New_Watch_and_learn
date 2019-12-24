@@ -61,6 +61,7 @@ public class CompeleteProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compelete_profile);
         casting();
+        checkprofiledoneornot();
         userprofile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

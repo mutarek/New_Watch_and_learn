@@ -3,8 +3,11 @@ package com.bdsoftwaresolution.watchtolearn.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bdsoftwaresolution.watchtolearn.R;
@@ -20,6 +23,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LandingActivity extends AppCompatActivity {
 
+    private LinearLayout tasklinear;
     private CircleImageView landingprofile;
     private TextView name, mobile, balance;
     private ImageView activity;
@@ -32,6 +36,12 @@ public class LandingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
         casting();
+        tasklinear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LandingActivity.this,VideoListActivity.class));
+            }
+        });
     }
 
     private void casting() {
@@ -39,6 +49,7 @@ public class LandingActivity extends AppCompatActivity {
         name = findViewById(R.id.landing_user_name);
         mobile = findViewById(R.id.lading_user_number);
         balance = findViewById(R.id.landing_user_balance);
+        tasklinear = findViewById(R.id.taskLinearID);
         activity = findViewById(R.id.activity);
         firebaseAuth = FirebaseAuth.getInstance();
         cUser = firebaseAuth.getCurrentUser().getUid();

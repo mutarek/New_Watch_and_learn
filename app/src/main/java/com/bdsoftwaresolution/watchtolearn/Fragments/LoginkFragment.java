@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bdsoftwaresolution.watchtolearn.Activities.CompeleteProfileActivity;
+import com.bdsoftwaresolution.watchtolearn.Activities.HomeActivity;
 import com.bdsoftwaresolution.watchtolearn.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
