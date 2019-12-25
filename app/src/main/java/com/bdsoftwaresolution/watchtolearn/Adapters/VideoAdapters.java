@@ -15,27 +15,36 @@ import com.bdsoftwaresolution.watchtolearn.R;
 
 import java.util.List;
 
-public class VideoAdapters extends RecyclerView.Adapter<VideoAdapters.VideoHolder> {
-    private List<VideoModel> modelList;
-    private Context context;
+public class VideoAdapters extends RecyclerView.Adapter<VideoAdapters.VideoViewHolder> {
     private EachVideoClick eachVideoClick;
+    private List<VideoModel> modelList;
+    private Context mContext;
 
-    public VideoAdapters(List<VideoModel> modelList, Context context, EachVideoClick eachVideoClick) {
-        this.modelList = modelList;
-        this.context = context;
+    public VideoAdapters(EachVideoClick eachVideoClick, List<VideoModel> modelList, Context mContext) {
         this.eachVideoClick = eachVideoClick;
+        this.modelList = modelList;
+        this.mContext = mContext;
     }
 
     @NonNull
     @Override
-    public VideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.sample_video_list, parent, false);
-        return new VideoHolder(view);
+    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        final View view = layoutInflater.inflate(R.layout.sample_video_list,parent,false);
+        final VideoViewHolder videoViewHolder = new VideoViewHolder(view);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eachVideoClick.OnVideoClick(view,videoViewHolder.getAdapterPosition());
+            }
+        });
+
+        return videoViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         holder.title.setText(modelList.get(position).getVideoTitle());
         holder.desc.setText(modelList.get(position).getVideoDesc());
         holder.category.setText(modelList.get(position).getVideoCategory());
@@ -47,17 +56,17 @@ public class VideoAdapters extends RecyclerView.Adapter<VideoAdapters.VideoHolde
         return modelList.size();
     }
 
-    public class VideoHolder extends RecyclerView.ViewHolder {
+    public class VideoViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView category, title, desc, tk;
+        private TextView category,title,desc,tk;
 
-        public VideoHolder(@NonNull View itemView) {
+        public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            category = itemView.findViewById(R.id.sample_categoty_id);
-            title = itemView.findViewById(R.id.sample_title_id);
+            category = itemView.findViewById(R.id.sampleCategoryID);
+            title = itemView.findViewById(R.id.sampleTitleID);
             desc = itemView.findViewById(R.id.sampleDescID);
-            tk = itemView.findViewById(R.id.sample_reward_tk);
+            tk = itemView.findViewById(R.id.sampleRewardID);
         }
     }
 }
