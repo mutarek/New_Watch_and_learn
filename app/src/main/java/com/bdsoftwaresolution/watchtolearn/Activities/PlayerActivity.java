@@ -18,6 +18,8 @@ import com.bdsoftwaresolution.watchtolearn.R;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
+import es.dmoral.toasty.Toasty;
+
 public class PlayerActivity extends AppCompatActivity {
 
 // Use this string for the first part of the practical (load local media
@@ -26,7 +28,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     // Use this string for part 2 (load media from the internet).
     private static final String VIDEO_SAMPLE =
-            "https://developers.google.com/training/images/tacoma_narrows.mp4";;
+            "https://developers.google.com/training/images/tacoma_narrows.mp4";
+    ;
 
     private VideoView mVideoView;
     private TextView mBufferingTextView;
@@ -36,7 +39,9 @@ public class PlayerActivity extends AppCompatActivity {
 
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
-    private ProgressDialog  progressDialog;
+    private ProgressDialog progressDialog;
+
+    String ur;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,8 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
         mVideoView = findViewById(R.id.videoview);
         progressDialog = new ProgressDialog(this);
+        Intent intent = getIntent();
+        ur = intent.getStringExtra("videoUrl");
         progressDialog.setTitle("Loading.......");
 
         if (savedInstanceState != null) {
@@ -90,7 +97,7 @@ public class PlayerActivity extends AppCompatActivity {
         progressDialog.show();
 
         // Buffer and decode the video sample.
-        Uri videoUri = getMedia(VIDEO_SAMPLE);
+        Uri videoUri = getMedia(ur);
         mVideoView.setVideoURI(videoUri);
 
         // Listener for onPrepared() event (runs after the media is prepared).
@@ -127,8 +134,6 @@ public class PlayerActivity extends AppCompatActivity {
 
                         // Return the video position to the start.
                         mVideoView.seekTo(0);
-                        startActivity(new Intent(PlayerActivity.this,VideoListActivity.class));
-                        finish();
                     }
                 });
     }
@@ -152,4 +157,6 @@ public class PlayerActivity extends AppCompatActivity {
                     "/raw/" + mediaName);
         }
     }
+
+
 }

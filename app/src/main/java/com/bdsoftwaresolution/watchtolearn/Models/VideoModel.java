@@ -3,6 +3,9 @@ package com.bdsoftwaresolution.watchtolearn.Models;
 public class VideoModel {
     String videoCategory,videoDesc,videoTitle,videoTk,videoUrl;
 
+    public VideoModel() {
+    }
+
     public VideoModel(String videoCategory, String videoDesc, String videoTitle, String videoTk, String videoUrl) {
         this.videoCategory = videoCategory;
         this.videoDesc = videoDesc;

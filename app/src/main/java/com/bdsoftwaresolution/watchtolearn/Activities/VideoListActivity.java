@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -57,7 +58,10 @@ public class VideoListActivity extends AppCompatActivity {
                     videoAdapters = new VideoAdapters(new EachVideoClick() {
                         @Override
                         public void OnVideoClick(View videoView, int videoPosition) {
-                            Toast.makeText(VideoListActivity.this, "" + videoPosition, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(),PlayerActivity.class);
+                            intent.putExtra("videoUrl",modelList.get(videoPosition).getVideoUrl());
+                            startActivity(intent);
+
                         }
                     }, modelList, getApplicationContext());
 

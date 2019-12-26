@@ -38,19 +38,18 @@
                         android:layout_height="96dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/man"
                         app:civ_border_color="#FF000000"
-                        app:civ_border_width="2dp"
-                        android:scaleType="centerCrop"/>
+                        app:civ_border_width="2dp" />
 
 
                     <ImageView
                         android:id="@+id/activity"
                         android:layout_width="30dp"
                         android:layout_height="30sp"
-                        android:src="@drawable/nonverifieduser"
                         android:layout_gravity="center"
-                        />
+                        android:src="@drawable/nonverifieduser" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
