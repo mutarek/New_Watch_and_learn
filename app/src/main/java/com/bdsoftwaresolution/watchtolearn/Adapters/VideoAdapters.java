@@ -36,6 +36,7 @@ public class VideoAdapters extends RecyclerView.Adapter<VideoAdapters.VideoViewH
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                view.setVisibility(View.GONE);
                 eachVideoClick.OnVideoClick(view,videoViewHolder.getAdapterPosition());
             }
         });

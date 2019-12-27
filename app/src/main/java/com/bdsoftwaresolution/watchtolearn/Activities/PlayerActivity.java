@@ -28,8 +28,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     // Use this string for part 2 (load media from the internet).
     private static final String VIDEO_SAMPLE =
-            "https://developers.google.com/training/images/tacoma_narrows.mp4";
-    ;
+            "https://firebasestorage.googleapis.com/v0/b/watch-to-learn.appspot.com/o/Je%20Pakhi%20Ghor%20Bojhena%20_%20Dhruba%20_%20Official%20Music%20Video%20%5B360p%5D.mp4?alt=media&token=82c8dcf7-a460-48c3-87cb-53a068f75a6a";
 
     private VideoView mVideoView;
     private TextView mBufferingTextView;
@@ -40,7 +39,6 @@ public class PlayerActivity extends AppCompatActivity {
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
     private ProgressDialog progressDialog;
-
     String ur;
 
     @Override
@@ -95,9 +93,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void initializePlayer() {
         progressDialog.show();
-
         // Buffer and decode the video sample.
-        Uri videoUri = getMedia(ur);
+        Uri videoUri = Uri.parse(ur);
         mVideoView.setVideoURI(videoUri);
 
         // Listener for onPrepared() event (runs after the media is prepared).
@@ -128,9 +125,7 @@ public class PlayerActivity extends AppCompatActivity {
                 new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
-                        Toast.makeText(PlayerActivity.this,
-                                R.string.toast_message,
-                                Toast.LENGTH_SHORT).show();
+                        Toasty.success(PlayerActivity.this,R.string.toast_message,Toast.LENGTH_SHORT).show();
 
                         // Return the video position to the start.
                         mVideoView.seekTo(0);
@@ -143,19 +138,6 @@ public class PlayerActivity extends AppCompatActivity {
     // might involve unregistering listeners or releasing audio focus.
     private void releasePlayer() {
         mVideoView.stopPlayback();
-    }
-
-    // Get a Uri for the media sample regardless of whether that sample is
-    // embedded in the app resources or available on the internet.
-    private Uri getMedia(String mediaName) {
-        if (URLUtil.isValidUrl(mediaName)) {
-            // Media name is an external URL.
-            return Uri.parse(mediaName);
-        } else {
-            // Media name is a raw resource embedded in the app.
-            return Uri.parse("android.resource://" + getPackageName() +
-                    "/raw/" + mediaName);
-        }
     }
 
 
