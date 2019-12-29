@@ -1,5 +1,7 @@
 package com.bdsoftwaresolution.watchtolearn.Activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -15,20 +17,21 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bdsoftwaresolution.watchtolearn.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import es.dmoral.toasty.Toasty;
 
 public class PlayerActivity extends AppCompatActivity {
-
-// Use this string for the first part of the practical (load local media
-    // from the raw directory).
-    // private static final String VIDEO_SAMPLE = "tacoma_narrows";
-
-    // Use this string for part 2 (load media from the internet).
-    private static final String VIDEO_SAMPLE =
-            "https://firebasestorage.googleapis.com/v0/b/watch-to-learn.appspot.com/o/Je%20Pakhi%20Ghor%20Bojhena%20_%20Dhruba%20_%20Official%20Music%20Video%20%5B360p%5D.mp4?alt=media&token=82c8dcf7-a460-48c3-87cb-53a068f75a6a";
 
     private VideoView mVideoView;
     private TextView mBufferingTextView;
@@ -39,7 +42,11 @@ public class PlayerActivity extends AppCompatActivity {
     // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
     private ProgressDialog progressDialog;
-    String ur;
+    String ur, currentUser;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseReference;
+
+    double oldtk, newtk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,10 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
         mVideoView = findViewById(R.id.videoview);
         progressDialog = new ProgressDialog(this);
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser().getUid();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        getOldReward();
         Intent intent = getIntent();
         ur = intent.getStringExtra("videoUrl");
         progressDialog.setTitle("Loading.......");
@@ -61,6 +72,22 @@ public class PlayerActivity extends AppCompatActivity {
         mVideoView.setMediaController(controller);
     }
 
+    private void getOldReward() {
+        databaseReference.child(currentUser).child("User_Balance").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                oldtk = Float.parseFloat(Float.valueOf(String.valueOf(dataSnapshot.getValue())).toString());
+                newtk = oldtk + 11.60;
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     @Override
     protected void onStart() {
@@ -68,22 +95,14 @@ public class PlayerActivity extends AppCompatActivity {
         initializePlayer();
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             mVideoView.pause();
         }
-    }
+    }*/
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // Media playback takes a lot of resources, so everything should be
-        // stopped and released at this time.
-        releasePlayer();
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -125,20 +144,28 @@ public class PlayerActivity extends AppCompatActivity {
                 new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
-                        Toasty.success(PlayerActivity.this,R.string.toast_message,Toast.LENGTH_SHORT).show();
+                        setReward();
 
-                        // Return the video position to the start.
-                        mVideoView.seekTo(0);
                     }
                 });
     }
 
-
-    // Release all media-related resources. In a more complicated app this
-    // might involve unregistering listeners or releasing audio focus.
-    private void releasePlayer() {
-        mVideoView.stopPlayback();
+    private void setReward() {
+        databaseReference.child(currentUser).child("User_Balance").setValue(newtk).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //Toasty.success(getApplicationContext(), "You Get Reward").show();
+                    updateUI();
+                } else {
+                    Toasty.error(getApplicationContext(), "" + task.getException()).show();
+                }
+            }
+        });
     }
 
+    private void updateUI() {
+        onBackPressed();
+    }
 
 }
