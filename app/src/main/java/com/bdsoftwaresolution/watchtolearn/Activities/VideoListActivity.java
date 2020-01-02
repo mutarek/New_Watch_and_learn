@@ -2,6 +2,7 @@ package com.bdsoftwaresolution.watchtolearn.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bdsoftwaresolution.watchtolearn.Adapters.VideoAdapters;
@@ -32,17 +34,51 @@ public class VideoListActivity extends AppCompatActivity {
     private VideoAdapters videoAdapters;
     private RecyclerView recyclerView;
     private DatabaseReference databaseReference;
+    private CardView video_one,video_two,video_three;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_list);
-        recyclerView = findViewById(R.id.videoRecyller);
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        /*recyclerView = findViewById(R.id.videoRecyller);
         recyclerView.setHasFixedSize(true);
         modelList = new ArrayList<>();
-        intirecyller();
+        intirecyller();*/
+        casting();
+        fetchData();
+        onClickListener();
 
+    }
+
+    private void fetchData() {
+        databaseReference.child("Tasks").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    String title = dataSnapshot.child("videoTitle").getValue().toString();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void onClickListener() {
+        video_one.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                video_one.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void casting() {
+        video_one =findViewById(R.id.video_one);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     private void intirecyller() {

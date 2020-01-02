@@ -35,11 +35,6 @@ public class PlayerActivity extends AppCompatActivity {
 
     private VideoView mVideoView;
     private TextView mBufferingTextView;
-
-    // Current playback position (in milliseconds).
-    private int mCurrentPosition = 0;
-
-    // Tag for the instance state bundle.
     private static final String PLAYBACK_TIME = "play_time";
     private ProgressDialog progressDialog;
     String ur, currentUser;
@@ -61,15 +56,9 @@ public class PlayerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ur = intent.getStringExtra("videoUrl");
         progressDialog.setTitle("Loading.......");
-
-        if (savedInstanceState != null) {
-            mCurrentPosition = savedInstanceState.getInt(PLAYBACK_TIME);
-        }
-
-        // Set up the media controller widget and attach it to the video view.
-        MediaController controller = new MediaController(this);
-        controller.setMediaPlayer(mVideoView);
-        mVideoView.setMediaController(controller);
+        initializePlayer();
+        MediaController mediaController = new MediaController(this);
+        mVideoView.setMediaController(mediaController);
     }
 
     private void getOldReward() {
@@ -89,65 +78,37 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initializePlayer();
-    }
-
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            mVideoView.pause();
-        }
-    }*/
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
-    }
-
     private void initializePlayer() {
         progressDialog.show();
-        // Buffer and decode the video sample.
         Uri videoUri = Uri.parse(ur);
         mVideoView.setVideoURI(videoUri);
+        mVideoView.start();
 
         // Listener for onPrepared() event (runs after the media is prepared).
-        mVideoView.setOnPreparedListener(
+        /*mVideoView.setOnPreparedListener(
                 new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
-
-                        // Hide buffering message
                         progressDialog.dismiss();
-
-                        // Restore saved position, if available.
-                        if (mCurrentPosition > 0) {
-                            mVideoView.seekTo(mCurrentPosition);
-                        } else {
-                            // Skipping to 1 shows the first frame of the video.
-                            mVideoView.seekTo(1);
-                        }
-
-                        // Start playing!
                         mVideoView.start();
                     }
-                });
+                });*/
 
-        // Listener for onCompletion() event (runs after media has finished
-        // playing).
-        mVideoView.setOnCompletionListener(
+
+        /*mVideoView.setOnCompletionListener(
                 new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
-                        setReward();
+                        //setReward();
+                        Toasty.success(PlayerActivity.this,"Done").show();
+                        updateUI();
 
                     }
-                });
+                });*/
+    }
+
+   /* private void updateUI() {
+        startActivity(new Intent(PlayerActivity.this,VideoListActivity.class));
     }
 
     private void setReward() {
@@ -156,16 +117,12 @@ public class PlayerActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     //Toasty.success(getApplicationContext(), "You Get Reward").show();
-                    updateUI();
                 } else {
                     Toasty.error(getApplicationContext(), "" + task.getException()).show();
                 }
             }
         });
-    }
+    }*/
 
-    private void updateUI() {
-        onBackPressed();
-    }
 
 }
